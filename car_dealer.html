@@ -10,7 +10,30 @@
 </head>
 
 <body>
-	<div id="salon">
+	<div class="head">
+		<span class="brand">Car Dealer</span>
+		<ul>
+			<li>Clients Served: <span id="clients_served">0</span></li>
+			<li>Cars Sold: <span id="cars_sold">0</span></li>
+            <li>Amount Collected: RM <span id="amount">0</span></li>
+		</ul>
+	</div>
+
+	<div class="content-container">
+		
+		<div class="client-queue">
+			<span class="client-in-queue">
+				Client in queue: <span id="client-in-queue">0</span>
+			</span>
+
+			<div id="clients_queue">
+				<!-- client add dinamicly here -->
+			</div>
+		</div>
+
+	</div>
+
+	<!-- <div id="salon">
     	<div id="clients_queue">
         	clients queue
         </div>
@@ -41,6 +64,6 @@
                 <li id="amount">€ 120.000,00</li>
             </ul>    
         </div>
-    </div>
+    </div> -->
 </body>
 </html>
