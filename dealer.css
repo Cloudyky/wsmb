@@ -1,3 +1,9 @@
+:root{
+	--bg-color: rgb(189, 189, 189);
+	--second-layer-bg-color: rgb(255, 255, 255);
+	--border-rouded: 10px;
+}
+
 *{
 	padding: 0;
 	margin: 0;
@@ -14,7 +20,7 @@ body{
 	justify-content: space-between;
 	align-items: center;
 	padding: 10px 20px;
-	background-color: white;
+	background-color: var(--second-layer-bg-color);
 }
 
 .head .brand{
@@ -36,5 +42,75 @@ body{
 }
 
 .content-container{
-	width: 100vw;
+	padding: 20px;
 }
+
+.client-container{
+	background-color: var(--second-layer-bg-color);
+	width: 9%;
+	height: 90vh;
+	border-radius: var(--border-rouded);
+	padding: 10px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+}
+
+.client-container .client-in-queue{
+	text-align: center;
+}
+
+.client-container #clients_queue{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+	height: 100%;
+	overflow-y: scroll;
+	gap: 20px;
+}
+
+.client-container #clients_queue .client {
+	position: relative; /* untuk positioning overlay */
+	background-color: var(--bg-color);
+	border-radius: var(--border-rouded);
+	width: 100px;
+	aspect-ratio: 1 / 1;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	padding: 5px;
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center;
+	border: 1px solid #ccc;
+	color: white;
+}
+
+.client-container #clients_queue .client::before {
+	content: "";
+	position: absolute;
+	inset: 0; /* top: 0; right: 0; bottom: 0; left: 0 */
+	background: rgba(0, 0, 0, 0.4); /* gelap lutsinar */
+	z-index: 0; /* duduk belakang teks */
+	border-radius: inherit;
+}
+
+.client-container #clients_queue .client span {
+	position: relative; /* supaya dia duduk atas overlay */
+	z-index: 1;
+	font-weight: bold;
+}
+
+.client_1{background-image:url(images/client_1.jpg);}
+.client_2{background-image:url(images/client_2.jpg);}
+.client_3{background-image:url(images/client_3.jpg);}
+.client_4{background-image:url(images/client_4.jpg);}
+.client_5{background-image:url(images/client_5.jpg);}
+.client_6{background-image:url(images/client_6.jpg);}
+.client_7{background-image:url(images/client_7.jpg);}
+.client_8{background-image:url(images/client_8.jpg);}
+.client_9{background-image:url(images/client_9.jpg);}
+.client_10{background-image:url(images/client_10.jpg);}

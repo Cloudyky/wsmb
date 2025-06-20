@@ -16,15 +16,38 @@ function newClient(){
 						})
 					);
 
-	$("#clients_queue").append($client);
+	if ($("#clients_queue").children().length < 10) {
+		$("#clients_queue").append($client);
+		$("#client_in_queue").html($("#clients_queue").children().length);
+
+		
+		$(".draggable").draggable({
+			revert: "invalid",
+			helper: "clone",
+		})
+
+		updateDraggableQueue();
+	}
 	
 	setTimeout(function(){newClient();},time);
 }
 
+function updateDraggableQueue() {
+	// Disable semua dulu
+	$("#clients_queue .client").draggable("disable");
+
+	// Aktifkan yang pertama sahaja
+	$("#clients_queue .client:first").draggable("enable");
+}
+
+
 $("document").ready(function(e) {
-	let clientServed, carsSold, amount, clientInQueue = 0;
+	let clientServed, carsSold, amount;
 
 	$("#clients_served").html(clientServed);
+	$("#cars_sold").html(carsSold);
+	$("#amount").html(amount);
 
 	newClient();
+
 });
