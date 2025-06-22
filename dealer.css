@@ -174,13 +174,18 @@ body{
 	padding: 10px; /* padding semua sudut */
 	display: flex;
 	flex-direction: column; /* supaya span atas, .cars-list bawah */
-	gap: 10px;
+	gap: 20px;
 	height: 100%; /* supaya boleh bahagi % dari parent */
+}
+
+.car-info{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 }
 
 .sales-floor .car-container span {
 	font-weight: bold;
-	display: block;
 	height: 10%;
 }
 
@@ -216,11 +221,13 @@ body{
 	padding: 5px 10px;
 	display: flex;
 	flex-shrink: 0;
+	gap: 2px;
 }
 
 .car img{
 	height: 120px;
 	aspect-ratio: 1 / 1;
+	border-radius: var(--border-rouded);
 }
 
 .car .client-drop{

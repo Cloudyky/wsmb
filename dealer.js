@@ -1,10 +1,10 @@
 var brandlist = new Array("Porsche","Volkswagen","Audi","BMW");
-var carList = [
-	{ brand: "Porsche", stock: 4, price: 650000 },
-	{ brand: "Volkswagen", stock: 6, price: 180000 },
-	{ brand: "Audi", stock: 5, price: 300000 },
-	{ brand: "BMW", stock: 3, price: 250000 }
-];
+let brands = {
+		Porsche: { count: 4, price: 650000 },
+		Volkswagen: { count: 6, price: 180000 },
+		Audi: { count: 5, price: 300000 },
+		BMW: { count: 3, price: 250000 }
+	};
 
 function newClient(){
 	var preference = Math.floor((Math.random()*4));
@@ -78,6 +78,32 @@ function exit(){
 	})
 }
 
+function generateCars() {
+	for (let brand in brands) {
+		let brandLower = brand.toLowerCase();
+		let container = $(`.cars-list.${brandLower}`);
+
+		for (let i = 1; i <= brands[brand].count; i++) {
+			container.append(`
+				<div class="car">
+					<img src="./images/${brand}_${i}.jpg" alt="">
+					<div class="client-drop">
+						Drop client here
+					</div>
+				</div>
+			`);
+		}
+
+		$(`#stock_${brandLower}`).text(brands[brand].count);
+		$(`#price_${brandLower}`).text(
+			brands[brand].price.toLocaleString("en-MY", {
+				minimumFractionDigits: 2,
+				maximumFractionDigits: 2
+			})
+		);
+	}
+}
+
 $("document").ready(function(e) {
 	let clientServed, carsSold, amount;
 
@@ -87,4 +113,5 @@ $("document").ready(function(e) {
 
 	newClient();
 	exit();
+	generateCars();
 });
