@@ -240,3 +240,19 @@ body{
 	width: 120px;
 	aspect-ratio: 1 / 1;
 }
+
+.ui-draggable {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ui-draggable-dragging {
+	width: 100px !important;
+	height: 100px !important;
+	background-size: cover !important;
+	background-position: center !important;
+	border-radius: 10px;
+	box-shadow: 0 0 5px rgba(0,0,0,0.5);
+	z-index: 9999 !important;
+}

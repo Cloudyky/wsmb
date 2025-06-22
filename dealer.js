@@ -16,6 +16,7 @@ function newClient(){
 	const $client = $('<div>', {
 						class: `client client_${client} draggable`,
 						'data-client-id': client,
+						'data-preference': brandlist[preference],
 					}).append(
 						$('<span>', {
 							class: 'preference',
@@ -30,9 +31,21 @@ function newClient(){
 		
 		$(".draggable").draggable({
 			revert: "invalid",
-			helper: "clone",
 			containment: "body",
-		})
+			helper: function() {
+				const $clone = $(this).clone();
+				$clone.css({
+					width: "100px",
+					height: "100px",
+					backgroundSize: "cover",
+					backgroundPosition: "center",
+					borderRadius: "10px",
+					boxShadow: "0 0 5px rgba(0,0,0,0.5)",
+					zIndex: 9999
+				});
+				return $clone;
+			}
+		});
 
 		updateDraggableQueue();
 	}
@@ -61,16 +74,24 @@ function exit(){
 			$(this).removeClass("highlight-dropzone"); 
 			const clientId = ui.draggable.data("client-id");
 
-			// Cari client asal ikut ID dalam queue
+			// Cari dalam queue
 			const $originalClient = $(`#clients_queue .client[data-client-id='${clientId}']`);
 
-			// Padam client asal dari DOM
-			$originalClient.remove();
+			if ($originalClient.length) {
+				// Kalau client masih dalam queue, buang dari queue
+				$originalClient.remove();
+			} else {
+				// Kalau client dari dalam kereta
+				const $parentDropzone = ui.draggable.closest(".client-drop");
+				
+				// Kosongkan dropzone dan tambah balik teks asal
+				$parentDropzone.empty().html("Drop client here");
+			}
 
 			// Update bilangan client dalam queue
 			$("#client_in_queue").html($("#clients_queue").children().length);
 
-			// Aktifkan client baru untuk drag
+			// Aktifkan client baru dalam queue
 			updateDraggableQueue();
 
 			console.log("Client exited.");
@@ -87,7 +108,7 @@ function generateCars() {
 			container.append(`
 				<div class="car">
 					<img src="./images/${brand}_${i}.jpg" alt="">
-					<div class="client-drop">
+					<div class="client-drop" data-brand="${brand}">
 						Drop client here
 					</div>
 				</div>
@@ -104,6 +125,127 @@ function generateCars() {
 	}
 }
 
+function setupClientDropzones() {
+	$(".client-drop").droppable({
+		accept: function(draggable) {
+			const clientPreference = draggable.data("preference");
+			const dropBrand = $(this).data("brand");
+			return clientPreference === dropBrand;
+		},
+		over: function(event, ui) {
+			$(this).addClass("highlight-dropzone");
+		},
+		out: function(event, ui) {
+			$(this).removeClass("highlight-dropzone");
+		},
+		drop: function(event, ui) {
+			$(this).removeClass("highlight-dropzone");
+
+			const $dropzone = $(this);
+			const dropBrand = $dropzone.data("brand");
+			const clientId = ui.draggable.data("client-id");
+
+			// Check dari queue ke tak
+			const fromQueue = $(`#clients_queue .client[data-client-id='${clientId}']`).length > 0;
+
+			// Kalau dropzone dah ada client lain
+			const $existingClient = $dropzone.children(".client");
+
+			if ($existingClient.length > 0) {
+				if (fromQueue) {
+					// Client dari queue tak boleh drop kalau tempat dah ada orang
+					ui.draggable.draggable("option", "revert", true);
+					return;
+				}
+
+				// === SWAP ===
+
+				// Cari dropzone asal client yang sedang ditarik
+				const $sourceDropzone = ui.draggable.closest(".client-drop");
+
+				// Swap antara dua dropzone
+				$sourceDropzone.empty().append($existingClient);
+				$dropzone.empty().append(ui.draggable);
+
+				// Reset gaya dua-dua client
+				[$existingClient, ui.draggable].forEach($client => {
+					$client
+						.addClass("draggable")
+						.css({
+							position: "static",
+							width: "100%",
+							height: "100%",
+							backgroundSize: "cover",
+							backgroundPosition: "center"
+						})
+						.find("span").css({
+							fontSize: "0.8rem",
+							color: "#fff",
+							textAlign: "center"
+						});
+
+					$client.draggable({
+						revert: "invalid",
+						helper: "clone",
+						containment: "body"
+					});
+				});
+
+				return;
+			}
+
+			// === NORMAL DROP (tempat kosong) ===
+
+			// Ambil dari queue atau kereta
+			let $client = $(`#clients_queue .client[data-client-id='${clientId}']`);
+			if ($client.length === 0) {
+				$client = ui.draggable;
+			}
+
+			// Kosongkan dropzone lama kalau bukan dari queue
+			const $oldDropzone = $client.closest(".client-drop");
+			if (!fromQueue && !$oldDropzone.is($dropzone)) {
+				$oldDropzone.empty().text("Drop client here");
+			}
+
+			$client.find(".preference").remove();
+
+			$client
+				.addClass("draggable")
+				.css({
+					position: "static",
+					width: "100%",
+					height: "100%",
+					backgroundSize: "cover",
+					backgroundPosition: "center"
+				})
+				.find("span").css({
+					fontSize: "0.8rem",
+					color: "#fff",
+					textAlign: "center"
+				});
+
+			$dropzone.empty().append($client);
+
+			$client.draggable({
+				revert: "invalid",
+				helper: "clone",
+				containment: "body"
+			});
+
+			// Kalau dari queue, buang dari queue
+			if (fromQueue) {
+				// Cari semula client asal dalam queue dan buang dia dari situ
+				const $queuedClient = $(`#clients_queue .client[data-client-id='${clientId}']`);
+				$queuedClient.remove();
+
+				$("#client_in_queue").html($("#clients_queue").children().length);
+				updateDraggableQueue();
+			}
+		}
+	});
+}
+
 $("document").ready(function(e) {
 	let clientServed, carsSold, amount;
 
@@ -114,4 +256,5 @@ $("document").ready(function(e) {
 	newClient();
 	exit();
 	generateCars();
+	setupClientDropzones();
 });
